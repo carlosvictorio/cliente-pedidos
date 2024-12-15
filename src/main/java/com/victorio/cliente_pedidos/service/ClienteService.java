@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.victorio.cliente_pedidos.models.Cliente;
 import com.victorio.cliente_pedidos.repositories.ClienteRepository;
+import com.victorio.cliente_pedidos.service.exceptions.ResourceNotFoundException;
 
 @Service
 public class ClienteService {
@@ -27,7 +28,7 @@ public class ClienteService {
 
 	public Cliente getById(Long id) {
 		Optional<Cliente> cliente = repository.findById(id);
-		return cliente.get();
+		return cliente.orElseThrow(() -> new ResourceNotFoundException("Cliente não encontrado"));
 	}
 	
 	public Cliente update(Long id, Cliente cliente) {

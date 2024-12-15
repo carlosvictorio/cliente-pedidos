@@ -2,6 +2,7 @@ package com.victorio.cliente_pedidos.models;
 
 import com.victorio.cliente_pedidos.enums.PedidoEnum;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -15,9 +16,13 @@ public class Pedido {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
+	@Column(nullable = false)
 	private String name;
+	@Column(nullable = false)
 	private Integer quantity;
+	@Column(nullable = false)
 	private Double price;
+	@Column(nullable = false)
 	private PedidoEnum status;
 	
 	@ManyToOne
