@@ -3,6 +3,7 @@ package com.victorio.cliente_pedidos.controllers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -15,7 +16,7 @@ import com.victorio.cliente_pedidos.service.ClienteService;
 import com.victorio.cliente_pedidos.service.PedidoService;
 
 @RestController
-@RequestMapping("/pedidos")
+@RequestMapping("/cliente/{clienteId}/pedidos")
 public class PedidoController {
 	
 	@Autowired
@@ -24,7 +25,7 @@ public class PedidoController {
 	@Autowired
 	private ClienteService clienteService;
 	
-	@PostMapping("/{id}")
+	@PostMapping
 	public ResponseEntity<Pedido> createPedido(@PathVariable Long id, @RequestBody Pedido pedido) {
 		
 		Cliente cliente = clienteService.getById(id);
@@ -33,7 +34,20 @@ public class PedidoController {
 		
 		return ResponseEntity.status(HttpStatus.CREATED).body(novoPedido);
 		
+	}
+	
+	@DeleteMapping("/{id}")
+	public ResponseEntity<Void> deletePedido(@PathVariable Long clienteId, @PathVariable Long pedidoId) {
+		Cliente cliente = clienteService.getById(clienteId);
+		Pedido pedido = pedidoService.getById(pedidoId);
 		
+		if(cliente.getId().equals(pedido.getCliente().getId())) {
+			cliente.getPedidos().remove(pedido);
+			clienteService.save(cliente);
+			return ResponseEntity.ok().build();
+		} else {
+			return ResponseEntity.notFound().build();
+		}
 	}
 
 }

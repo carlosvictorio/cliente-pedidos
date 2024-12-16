@@ -31,6 +31,10 @@ public class ClienteService {
 		return cliente.orElseThrow(() -> new ResourceNotFoundException("Cliente não encontrado"));
 	}
 	
+	public Cliente save(Cliente cliente) {
+		repository.save(cliente);
+	}
+	
 	public Cliente update(Long id, Cliente cliente) {
 		Optional<Cliente> clienteAntigo = repository.findById(id);
 		updateData(clienteAntigo.get(), cliente);
