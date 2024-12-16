@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -24,7 +25,7 @@ public class ClienteController {
 	private ClienteService service;
 	
 	@PostMapping
-	public ResponseEntity<Cliente> create(Cliente cliente) {
+	public ResponseEntity<Cliente> create(@RequestBody Cliente cliente) {
 		Cliente c = service.create(cliente);
 		return ResponseEntity.status(HttpStatus.CREATED).body(c);
 	}
@@ -43,7 +44,7 @@ public class ClienteController {
 	}
 	
 	@PutMapping("/{id}")
-	public ResponseEntity<Cliente> update(@PathVariable Long id, Cliente cliente) {
+	public ResponseEntity<Cliente> update(@PathVariable Long id, @RequestBody Cliente cliente) {
 		Cliente clienteAtualizado = service.update(id, cliente);
 		return ResponseEntity.ok().body(clienteAtualizado);
 	}

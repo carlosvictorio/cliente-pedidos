@@ -30,6 +30,11 @@ public class PedidoService {
 		return pedido.get();
 	}
 	
+	public Pedido save(Pedido pedido) {
+		Pedido pedidoSaved = repository.save(pedido);
+		return pedidoSaved;
+	}
+	
 	public Pedido update(Long id, Pedido obj) {
 		Pedido pedido = getById(id);
 		updateData(pedido, obj);

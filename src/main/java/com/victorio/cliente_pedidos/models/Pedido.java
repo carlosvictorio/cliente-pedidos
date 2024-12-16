@@ -1,5 +1,6 @@
 package com.victorio.cliente_pedidos.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.victorio.cliente_pedidos.enums.PedidoEnum;
 
 import jakarta.persistence.Column;
@@ -27,16 +28,18 @@ public class Pedido {
 	
 	@ManyToOne
 	@JoinColumn(name = "cliente_id")
+	@JsonIgnore 
 	private Cliente cliente;
 	
 	public Pedido() {
 	}
-	
-	public Pedido(String name, Integer quantity, Double price, PedidoEnum status) {
+		
+	public Pedido(String name, Integer quantity, Double price, PedidoEnum status, Cliente cliente) {
 		this.name = name;
 		this.quantity = quantity;
 		this.price = price;
 		this.status = status;
+		this.cliente = cliente;
 	}
 	
 	public Long getId() {
@@ -74,7 +77,13 @@ public class Pedido {
 	public void setStatus(PedidoEnum status) {
 		this.status = status;
 	}
-	
-	
 
+	public Cliente getCliente() {
+		return cliente;
+	}
+
+	public void setCliente(Cliente cliente) {
+		this.cliente = cliente;
+	}
+	
 }
