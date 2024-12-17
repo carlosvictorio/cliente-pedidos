@@ -7,9 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.victorio.cliente_pedidos.enums.PedidoEnum;
-import com.victorio.cliente_pedidos.models.Cliente;
 import com.victorio.cliente_pedidos.models.Pedido;
 import com.victorio.cliente_pedidos.repositories.PedidoRepository;
+import com.victorio.cliente_pedidos.service.exceptions.ResourceNotFoundException;
 
 @Service
 public class PedidoService {
@@ -24,10 +24,25 @@ public class PedidoService {
 	public List<Pedido> getAll() {
 		return repository.findAll();
 	}
-	
+
 	public Pedido getById(Long id) {
 		Optional<Pedido> pedido = repository.findById(id);
+		
+		if(pedido.isEmpty()) {
+			throw new ResourceNotFoundException("Pedido com o ID:" + id + " não encontrado!");
+		}
+		
 		return pedido.get();
+	}
+	
+	public List<Pedido> getByIdCliente(Long clienteId) {
+		List<Pedido> pedidos = repository.findByClienteId(clienteId);
+	
+		if(pedidos.isEmpty()) {
+			throw new ResourceNotFoundException("Pedidos não encontrados para o cliente do ID: " + clienteId);
+		}
+		
+		return pedidos;
 	}
 	
 	public Pedido save(Pedido pedido) {
@@ -50,6 +65,11 @@ public class PedidoService {
 	
 	public void updateStatus(Long id, PedidoEnum status) {
 		Pedido pedido = getById(id);
+		
+		if(pedido == null) {
+			throw new ResourceNotFoundException("Pedido com ID:" + id + " não encontrado!");
+		}
+		
 		pedido.setStatus(status);
 		repository.save(pedido);
 	}

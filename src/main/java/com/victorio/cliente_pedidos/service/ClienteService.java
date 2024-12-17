@@ -28,11 +28,11 @@ public class ClienteService {
 
 	public Cliente getById(Long id) {
 		Optional<Cliente> cliente = repository.findById(id);
-		return cliente.orElseThrow(() -> new ResourceNotFoundException("Cliente não encontrado"));
+		return cliente.orElseThrow(() -> new ResourceNotFoundException("Cliente com ID:" + id +" não encontrado"));
 	}
 	
 	public Cliente save(Cliente cliente) {
-		repository.save(cliente);
+		return repository.save(cliente);
 	}
 	
 	public Cliente update(Long id, Cliente cliente) {
