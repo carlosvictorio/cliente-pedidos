@@ -24,10 +24,16 @@ public class ClienteController {
 	@Autowired
 	private ClienteService service;
 	
-	@PostMapping
+	/*@PostMapping
 	public ResponseEntity<Cliente> create(@RequestBody Cliente cliente) {
 		Cliente c = service.create(cliente);
 		return ResponseEntity.status(HttpStatus.CREATED).body(c);
+	}*/
+	
+	@PostMapping
+	public ResponseEntity<String> create(@RequestBody Cliente cliente) {
+		service.create(cliente);
+		return ResponseEntity.status(HttpStatus.CREATED).body("Cliente criado com sucesso!");
 	}
 	
 	@GetMapping

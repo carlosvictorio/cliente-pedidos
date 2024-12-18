@@ -18,9 +18,14 @@ public class ClienteService {
 	@Autowired
 	private ClienteRepository repository;
 	
-	public Cliente create(Cliente cliente) {
-		Cliente clienteSalvo = repository.save(cliente);
-		return clienteSalvo;
+	public void create(Cliente cliente) {
+		try {
+		//Cliente clienteSalvo = repository.save(cliente);
+			repository.save(cliente);
+		} catch (DataIntegrityViolationException e) {
+			throw new MissingRequiredAttributeException();
+		}
+		//return clienteSalvo;
 	}
 	
 	public List<Cliente> getAll() {
@@ -57,13 +62,9 @@ public class ClienteService {
 	}
 	
 	public void updateData(Cliente cliente, Cliente obj) {
-		//try {
 		cliente.setNome(obj.getNome());
 		cliente.setEmail(obj.getEmail());
 		cliente.setEndereco(obj.getEndereco());
-		/*} catch (SQLIntegrityConstraintViolationException e) {
-			throw new MissingRequiredAttributeException();
-		}*/
 	}
 	
 	public void delete(Long id) {
