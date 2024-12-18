@@ -44,6 +44,8 @@ public class PedidoController {
 		return ResponseEntity.ok().body(pedidos);
 	}
 	
+	//Adicionar metódo buscar pedido por ID do pedido
+	
 	@DeleteMapping("/{id}")
 	public ResponseEntity<Void> deletePedido(@PathVariable Long clienteId, @PathVariable Long id) {
 		Cliente cliente = clienteService.getById(clienteId);

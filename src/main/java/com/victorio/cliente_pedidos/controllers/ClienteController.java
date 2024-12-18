@@ -47,6 +47,8 @@ public class ClienteController {
 	public ResponseEntity<Cliente> update(@PathVariable Long id, @RequestBody Cliente cliente) {
 		Cliente clienteAtualizado = service.update(id, cliente);
 		return ResponseEntity.ok().body(clienteAtualizado);
+		//service.update(id, cliente);
+		//return ResponseEntity.ok().build();
 	}
 	
 	@DeleteMapping("/{id}")
