@@ -1,9 +1,12 @@
 package com.victorio.cliente_pedidos.controllers;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -26,23 +29,28 @@ public class PedidoController {
 	private ClienteService clienteService;
 	
 	@PostMapping
-	public ResponseEntity<Pedido> createPedido(@PathVariable Long id, @RequestBody Pedido pedido) {
+	public ResponseEntity<Pedido> createPedido(@PathVariable Long clienteId, @RequestBody Pedido pedido) {
 		
-		Cliente cliente = clienteService.getById(id);
+		Cliente cliente = clienteService.getById(clienteId);
 		pedido.setCliente(cliente);
 		Pedido novoPedido = pedidoService.save(pedido);
 		
 		return ResponseEntity.status(HttpStatus.CREATED).body(novoPedido);
-		
+	}
+	
+	@GetMapping
+	public ResponseEntity<List<Pedido>> pedidosByCliente(@PathVariable Long clienteId) {
+		List<Pedido> pedidos = pedidoService.getByIdCliente(clienteId);
+		return ResponseEntity.ok().body(pedidos);
 	}
 	
 	@DeleteMapping("/{id}")
-	public ResponseEntity<Void> deletePedido(@PathVariable Long clienteId, @PathVariable Long pedidoId) {
+	public ResponseEntity<Void> deletePedido(@PathVariable Long clienteId, @PathVariable Long id) {
 		Cliente cliente = clienteService.getById(clienteId);
-		Pedido pedido = pedidoService.getById(pedidoId);
+		Pedido pedido = pedidoService.getById(id);
 		
 		if(cliente.getId().equals(pedido.getCliente().getId())) {
-			cliente.getPedidos().remove(pedido);
+			pedidoService.delete(pedido.getId());
 			clienteService.save(cliente);
 			return ResponseEntity.ok().build();
 		} else {
