@@ -24,15 +24,9 @@ public class ClienteController {
 	@Autowired
 	private ClienteService service;
 	
-	/*@PostMapping
-	public ResponseEntity<Cliente> create(@RequestBody Cliente cliente) {
-		Cliente c = service.create(cliente);
-		return ResponseEntity.status(HttpStatus.CREATED).body(c);
-	}*/
-	
 	@PostMapping
 	public ResponseEntity<String> create(@RequestBody Cliente cliente) {
-		service.create(cliente);
+		service.save(cliente);
 		return ResponseEntity.status(HttpStatus.CREATED).body("Cliente criado com sucesso!");
 	}
 	
@@ -40,7 +34,6 @@ public class ClienteController {
 	public ResponseEntity<List<Cliente>> getAll() {
 		List<Cliente> clientes = service.getAll();
 		return ResponseEntity.ok().body(clientes);
-		
 	}
 	
 	@GetMapping("/{id}")
@@ -53,8 +46,6 @@ public class ClienteController {
 	public ResponseEntity<Cliente> update(@PathVariable Long id, @RequestBody Cliente cliente) {
 		Cliente clienteAtualizado = service.update(id, cliente);
 		return ResponseEntity.ok().body(clienteAtualizado);
-		//service.update(id, cliente);
-		//return ResponseEntity.ok().build();
 	}
 	
 	@DeleteMapping("/{id}")

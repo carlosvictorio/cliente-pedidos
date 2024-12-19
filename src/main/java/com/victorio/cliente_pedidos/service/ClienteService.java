@@ -18,14 +18,12 @@ public class ClienteService {
 	@Autowired
 	private ClienteRepository repository;
 	
-	public void create(Cliente cliente) {
+	public void save(Cliente cliente) {
 		try {
-		//Cliente clienteSalvo = repository.save(cliente);
 			repository.save(cliente);
 		} catch (DataIntegrityViolationException e) {
 			throw new MissingRequiredAttributeException();
 		}
-		//return clienteSalvo;
 	}
 	
 	public List<Cliente> getAll() {
@@ -36,10 +34,6 @@ public class ClienteService {
 	public Cliente getById(Long id) {
 		Optional<Cliente> cliente = repository.findById(id);
 		return cliente.orElseThrow(() -> new ResourceNotFoundException("Cliente com ID:" + id +" não encontrado"));
-	}
-	
-	public Cliente save(Cliente cliente) {
-		return repository.save(cliente);
 	}
 	
 	public Cliente update(Long id, Cliente cliente) {
