@@ -2,11 +2,13 @@ package com.victorio.cliente_pedidos.service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
+import com.victorio.cliente_pedidos.dto.ClienteDTO;
 import com.victorio.cliente_pedidos.models.Cliente;
 import com.victorio.cliente_pedidos.repositories.ClienteRepository;
 import com.victorio.cliente_pedidos.service.exceptions.MissingRequiredAttributeException;
@@ -26,17 +28,26 @@ public class ClienteService {
 		}
 	}
 	
-	public List<Cliente> getAll() {
+	public List<ClienteDTO> getAll() {
 		List<Cliente> clientes = repository.findAll();
-		return clientes;
+		List<ClienteDTO> clientesDTO = clientes.stream()
+				.map(cliente -> new ClienteDTO(cliente))
+				.collect(Collectors.toList());
+		
+		return clientesDTO;
 	}
 
-	public Cliente getById(Long id) {
+	public ClienteDTO getById(Long id) {
+		
 		Optional<Cliente> cliente = repository.findById(id);
-		return cliente.orElseThrow(() -> new ResourceNotFoundException("Cliente com ID:" + id +" não encontrado"));
+		if(cliente.isEmpty()) {
+			throw new ResourceNotFoundException("Cliente com ID: " + id + " não encontrado!");
+		}
+		
+		return new ClienteDTO(cliente.get());
 	}
 	
-	public Cliente update(Long id, Cliente cliente) {
+	public ClienteDTO update(Long id, Cliente cliente) {
 		
 		Optional<Cliente> clienteAntigo = repository.findById(id);
 		
@@ -52,7 +63,7 @@ public class ClienteService {
 		}
 
 		Cliente clienteAtualizado = repository.save(clienteAntigo.get());
-		return clienteAtualizado;
+		return new ClienteDTO(clienteAtualizado);
 	}
 	
 	public void updateData(Cliente cliente, Cliente obj) {

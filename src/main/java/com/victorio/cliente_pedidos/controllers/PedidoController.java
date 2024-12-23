@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
 import com.victorio.cliente_pedidos.models.Cliente;
 import com.victorio.cliente_pedidos.models.Pedido;
 import com.victorio.cliente_pedidos.service.ClienteService;
@@ -23,36 +22,34 @@ import com.victorio.cliente_pedidos.service.PedidoService;
 public class PedidoController {
 	
 	@Autowired
-	private PedidoService pedidoService;
+	private PedidoService service;
 	
 	@Autowired
 	private ClienteService clienteService;
 	
 	@PostMapping
-	public ResponseEntity<Pedido> createPedido(@PathVariable Long clienteId, @RequestBody Pedido pedido) {
+	public ResponseEntity<Void> createPedido(@PathVariable Long clienteId, @RequestBody Pedido pedido) {
 		
-		Cliente cliente = clienteService.getById(clienteId);
+		Cliente cliente = service.getClienteById(clienteId);
 		pedido.setCliente(cliente);
-		Pedido novoPedido = pedidoService.save(pedido);
+		service.save(pedido);
 		
-		return ResponseEntity.status(HttpStatus.CREATED).body(novoPedido);
+		return ResponseEntity.status(HttpStatus.CREATED).build();
 	}
 	
 	@GetMapping
 	public ResponseEntity<List<Pedido>> pedidosByCliente(@PathVariable Long clienteId) {
-		List<Pedido> pedidos = pedidoService.getByIdCliente(clienteId);
+		List<Pedido> pedidos = service.getByIdCliente(clienteId);
 		return ResponseEntity.ok().body(pedidos);
 	}
 	
-	//Adicionar metódo buscar pedido por ID do pedido
-	
 	@DeleteMapping("/{id}")
 	public ResponseEntity<Void> deletePedido(@PathVariable Long clienteId, @PathVariable Long id) {
-		Cliente cliente = clienteService.getById(clienteId);
-		Pedido pedido = pedidoService.getById(id);
+		Cliente cliente = service.getClienteById(clienteId);
+		Pedido pedido = service.getById(id);
 		
 		if(cliente.getId().equals(pedido.getCliente().getId())) {
-			pedidoService.delete(pedido.getId());
+			service.delete(pedido.getId());
 			clienteService.save(cliente);
 			return ResponseEntity.ok().build();
 		} else {

@@ -4,11 +4,15 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import com.victorio.cliente_pedidos.enums.PedidoEnum;
+import com.victorio.cliente_pedidos.models.Cliente;
 import com.victorio.cliente_pedidos.models.Pedido;
+import com.victorio.cliente_pedidos.repositories.ClienteRepository;
 import com.victorio.cliente_pedidos.repositories.PedidoRepository;
+import com.victorio.cliente_pedidos.service.exceptions.MissingRequiredAttributeException;
 import com.victorio.cliente_pedidos.service.exceptions.ResourceNotFoundException;
 
 @Service
@@ -17,8 +21,25 @@ public class PedidoService {
 	@Autowired
 	private PedidoRepository repository;
 	
-	public Pedido create(Pedido pedido) {
-		return repository.save(pedido);
+	@Autowired
+	private ClienteRepository clienteRepository;
+	
+	public Cliente getClienteById(Long id) {
+		
+		Optional<Cliente> cliente = clienteRepository.findById(id);
+		if(cliente.isEmpty()) {
+			throw new ResourceNotFoundException("Cliente com ID: " + id + " não encontrado!");
+		}
+		
+		return cliente.get();
+	}
+	
+	public void save(Pedido pedido) {
+		try {
+			repository.save(pedido);
+		} catch (DataIntegrityViolationException e) {
+			throw new MissingRequiredAttributeException();
+		}
 	}
 	
 	public List<Pedido> getAll() {
@@ -28,11 +49,7 @@ public class PedidoService {
 	public Pedido getById(Long id) {
 		Optional<Pedido> pedido = repository.findById(id);
 		
-		if(pedido.isEmpty()) {
-			throw new ResourceNotFoundException("Pedido com o ID:" + id + " não encontrado!");
-		}
-		
-		return pedido.get();
+		return pedido.orElseThrow(() -> new ResourceNotFoundException("Pedido com o ID:" + id + " não encontrado!"));
 	}
 	
 	public List<Pedido> getByIdCliente(Long clienteId) {
@@ -42,17 +59,16 @@ public class PedidoService {
 			throw new ResourceNotFoundException("Pedidos não encontrados para o cliente do ID: " + clienteId);
 		}
 		
-		return pedidos;
-	}
-	
-	public Pedido save(Pedido pedido) {
-		Pedido pedidoSaved = repository.save(pedido);
-		return pedidoSaved;
+		return pedidos; 
 	}
 	
 	public Pedido update(Long id, Pedido obj) {
 		Pedido pedido = getById(id);
-		updateData(pedido, obj);
+		try {
+			updateData(pedido, obj);
+		} catch (DataIntegrityViolationException e) {
+			throw new MissingRequiredAttributeException();
+		}
 		return repository.save(pedido);
 	}
 	
@@ -75,7 +91,11 @@ public class PedidoService {
 	}
 	
 	public void delete(Long id) {
+		try {
 		Optional<Pedido> pedido = repository.findById(id);
 		repository.delete(pedido.get());
+		} catch (RuntimeException e) {
+			e.printStackTrace();
+		}
 	}
 }

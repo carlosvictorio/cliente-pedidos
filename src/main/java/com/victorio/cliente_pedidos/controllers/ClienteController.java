@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.victorio.cliente_pedidos.dto.ClienteDTO;
 import com.victorio.cliente_pedidos.models.Cliente;
 import com.victorio.cliente_pedidos.service.ClienteService;
 
@@ -31,20 +32,20 @@ public class ClienteController {
 	}
 	
 	@GetMapping
-	public ResponseEntity<List<Cliente>> getAll() {
-		List<Cliente> clientes = service.getAll();
+	public ResponseEntity<List<ClienteDTO>> getAll() {
+		List<ClienteDTO> clientes = service.getAll();
 		return ResponseEntity.ok().body(clientes);
 	}
 	
 	@GetMapping("/{id}")
-	public ResponseEntity<Cliente> getById(@PathVariable Long id) {
-		Cliente cliente = service.getById(id);
-		return ResponseEntity.ok().body(cliente);
+	public ResponseEntity<ClienteDTO> getById(@PathVariable Long id) {
+		ClienteDTO clienteDTO = service.getById(id);
+		return ResponseEntity.ok().body(clienteDTO);
 	}
 	
 	@PutMapping("/{id}")
-	public ResponseEntity<Cliente> update(@PathVariable Long id, @RequestBody Cliente cliente) {
-		Cliente clienteAtualizado = service.update(id, cliente);
+	public ResponseEntity<ClienteDTO> update(@PathVariable Long id, @RequestBody Cliente cliente) {
+		ClienteDTO clienteAtualizado = service.update(id, cliente);
 		return ResponseEntity.ok().body(clienteAtualizado);
 	}
 	
