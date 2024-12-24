@@ -2,13 +2,10 @@ package com.victorio.cliente_pedidos.service;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
-
-import com.victorio.cliente_pedidos.dto.PedidoDTO;
 import com.victorio.cliente_pedidos.enums.PedidoEnum;
 import com.victorio.cliente_pedidos.models.Cliente;
 import com.victorio.cliente_pedidos.models.Pedido;

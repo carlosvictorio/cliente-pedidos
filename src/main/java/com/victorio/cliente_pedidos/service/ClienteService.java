@@ -28,26 +28,23 @@ public class ClienteService {
 		}
 	}
 	
-	public List<ClienteDTO> getAll() {
+	public List<Cliente> getAll() {
 		List<Cliente> clientes = repository.findAll();
-		List<ClienteDTO> clientesDTO = clientes.stream()
-				.map(cliente -> new ClienteDTO(cliente))
-				.collect(Collectors.toList());
 		
-		return clientesDTO;
+		return clientes;
 	}
 
-	public ClienteDTO getById(Long id) {
+	public Cliente getById(Long id) {
 		
 		Optional<Cliente> cliente = repository.findById(id);
 		if(cliente.isEmpty()) {
 			throw new ResourceNotFoundException("Cliente com ID: " + id + " não encontrado!");
 		}
 		
-		return new ClienteDTO(cliente.get());
+		return cliente.get();
 	}
 	
-	public ClienteDTO update(Long id, Cliente cliente) {
+	public Cliente update(Long id, Cliente cliente) {
 		
 		Optional<Cliente> clienteAntigo = repository.findById(id);
 		
@@ -63,7 +60,7 @@ public class ClienteService {
 		}
 
 		Cliente clienteAtualizado = repository.save(clienteAntigo.get());
-		return new ClienteDTO(clienteAtualizado);
+		return clienteAtualizado;
 	}
 	
 	public void updateData(Cliente cliente, Cliente obj) {

@@ -26,7 +26,7 @@ public class PedidoController {
 	
 	@Autowired
 	private PedidoService service;
-	
+
 	@Autowired
 	private ClienteService clienteService;
 	
