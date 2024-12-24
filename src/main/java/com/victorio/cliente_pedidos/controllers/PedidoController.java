@@ -1,6 +1,7 @@
 package com.victorio.cliente_pedidos.controllers;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -12,6 +13,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.victorio.cliente_pedidos.dto.PedidoDTO;
 import com.victorio.cliente_pedidos.models.Cliente;
 import com.victorio.cliente_pedidos.models.Pedido;
 import com.victorio.cliente_pedidos.service.ClienteService;
@@ -38,9 +41,10 @@ public class PedidoController {
 	}
 	
 	@GetMapping
-	public ResponseEntity<List<Pedido>> pedidosByCliente(@PathVariable Long clienteId) {
+	public ResponseEntity<List<PedidoDTO>> pedidosByCliente(@PathVariable Long clienteId) {
 		List<Pedido> pedidos = service.getByIdCliente(clienteId);
-		return ResponseEntity.ok().body(pedidos);
+		List<PedidoDTO> pedidosDTO = pedidos.stream().map(pedido -> new PedidoDTO(pedido)).collect(Collectors.toList());
+		return ResponseEntity.ok().body(pedidosDTO);
 	}
 	
 	@DeleteMapping("/{id}")

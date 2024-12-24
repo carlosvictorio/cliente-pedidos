@@ -2,11 +2,13 @@ package com.victorio.cliente_pedidos.service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
+import com.victorio.cliente_pedidos.dto.PedidoDTO;
 import com.victorio.cliente_pedidos.enums.PedidoEnum;
 import com.victorio.cliente_pedidos.models.Cliente;
 import com.victorio.cliente_pedidos.models.Pedido;
@@ -43,12 +45,12 @@ public class PedidoService {
 	}
 	
 	public List<Pedido> getAll() {
-		return repository.findAll();
+		List<Pedido> pedidos = repository.findAll();;
+		return pedidos;
 	}
 
 	public Pedido getById(Long id) {
 		Optional<Pedido> pedido = repository.findById(id);
-		
 		return pedido.orElseThrow(() -> new ResourceNotFoundException("Pedido com o ID:" + id + " não encontrado!"));
 	}
 	
@@ -58,7 +60,6 @@ public class PedidoService {
 		if(pedidos.isEmpty()) {
 			throw new ResourceNotFoundException("Pedidos não encontrados para o cliente do ID: " + clienteId);
 		}
-		
 		return pedidos; 
 	}
 	
