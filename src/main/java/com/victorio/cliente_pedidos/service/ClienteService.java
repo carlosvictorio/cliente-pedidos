@@ -1,6 +1,5 @@
 package com.victorio.cliente_pedidos.service;
 
-import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,6 +19,16 @@ public class ClienteService {
 	private ClienteRepository repository;
 	
 	public void save(Cliente cliente) {
+		if (cliente.getNome() == null || cliente.getNome().isEmpty()) {
+		        throw new MissingRequiredAttributeException("Nome é um campo obrigatório");
+		}
+		if (cliente.getEmail() == null || cliente.getEmail().isEmpty()) {
+		        throw new MissingRequiredAttributeException("Email é um campo obrigatório");
+		}
+		if (cliente.getEndereco() == null || cliente.getEndereco().isEmpty()) {
+		        throw new MissingRequiredAttributeException("Endereço é um campo obrigatório");
+		}
+		 
 		try {
 			repository.save(cliente);
 		} catch (DataIntegrityViolationException e) {
