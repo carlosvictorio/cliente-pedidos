@@ -1,6 +1,7 @@
 package com.victorio.cliente_pedidos.services;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -31,9 +32,9 @@ public class ClienteServiceTeste {
 	
 	@InjectMocks
 	private ClienteService service;
-	
+		
 	@Test
-	void saveClienteSucess() {
+	void saveClienteSuccess() {
 		List<Pedido> listaTeste = new ArrayList<>();
 		Cliente cliente = new Cliente("Carlos Victorio", "victorio@gmail.com", "AV. PSM", listaTeste);
 		
@@ -78,7 +79,7 @@ public class ClienteServiceTeste {
 	}
 	
 	@Test
-	void getByIdSucess() {
+	void getByIdSuccess() {
 
 		List<Pedido> listaTeste = new ArrayList<>();
 		Cliente cliente = new Cliente("Victorio", "victorio@gmail.com", "AV. PSM", listaTeste);
@@ -99,5 +100,55 @@ public class ClienteServiceTeste {
 		Assertions.assertThrows(ResourceNotFoundException.class, () -> service.getById(1L));
 	}
 	
+	@Test
+	void updateSuccess() {
+		List<Pedido> listaTeste = new ArrayList<>();
+		List<Pedido> listaAtualizada = new ArrayList<>();
+		Cliente clienteExistente = new Cliente("Joãozinho", "jao@gmail.com", "Marginal Tietê", listaTeste);
+		Cliente clienteAtualizado = new Cliente("João", "jao2002@gmail.com", "Centro", listaAtualizada);
+		
+		when(repository.findById(clienteExistente.getId())).thenReturn(Optional.of(clienteExistente));
+		when(repository.save(clienteExistente)).thenReturn(clienteAtualizado);
+		
+		service.update(clienteExistente.getId(), clienteAtualizado);
+		
+		Assertions.assertEquals(clienteExistente.getId(), clienteAtualizado.getId());
+		Assertions.assertEquals(clienteExistente.getNome(), clienteAtualizado.getNome());
+		Assertions.assertEquals(clienteExistente.getEmail(), clienteAtualizado.getEmail());
+		Assertions.assertEquals(clienteExistente.getEndereco(), clienteAtualizado.getEndereco());
+		Assertions.assertEquals(clienteExistente.getPedidos(), clienteAtualizado.getPedidos());
+		
+		verify(repository, times(1)).save(clienteExistente);
+		
+	}
+	
+	@Test
+	void update_ShouldThrowResourceNotFoundException_WhenIdNotFound() {
+		List<Pedido> listaAtualizada = new ArrayList<>();
+		Cliente clienteAtualizado = new Cliente("João", "jao2002@gmail.com", "Centro", listaAtualizada);
+		
+		when(repository.findById(10L)).thenReturn(Optional.empty());
+		ResourceNotFoundException exceptionThrown = Assertions.assertThrows(ResourceNotFoundException.class, () -> service.update(10L, clienteAtualizado));
+		
+		Assertions.assertEquals("Cliente com ID:10 não encontrado!", exceptionThrown.getMessage());
+	}
 
+	@Test
+	void update_ShouldThrowMissingRequiredAttributeException_WhenAttributeIsNull() {
+		List<Pedido> lista = new ArrayList<>();
+		Cliente clienteComNomeNull = new Cliente(null, "jao2002@gmail.com", "Centro", lista);
+		when(repository.findById(1L)).thenReturn(Optional.of(clienteComNomeNull));	
+		MissingRequiredAttributeException exceptionThrownName = Assertions.assertThrows(MissingRequiredAttributeException.class, () -> service.update(1L, clienteComNomeNull));
+		Assertions.assertEquals("Preencha todos campos obrigatórios", exceptionThrownName.getMessage());
+		
+		Cliente clienteComEmailNull = new Cliente("Victorio", null, "Centro", lista);
+		when(repository.findById(1L)).thenReturn(Optional.of(clienteComEmailNull));	
+		MissingRequiredAttributeException exceptionThrownEmail = Assertions.assertThrows(MissingRequiredAttributeException.class, () -> service.update(1L, clienteComEmailNull));
+		Assertions.assertEquals("Preencha todos campos obrigatórios", exceptionThrownEmail.getMessage());
+		
+		Cliente clienteComEnderecoNull = new Cliente("Victorio", "jao2002@gmail.com", null, lista);
+		when(repository.findById(1L)).thenReturn(Optional.of(clienteComEnderecoNull));
+		MissingRequiredAttributeException exceptionThrownEndereco = Assertions.assertThrows(MissingRequiredAttributeException.class, () -> service.update(1L, clienteComEnderecoNull));
+		Assertions.assertEquals("Preencha todos campos obrigatórios", exceptionThrownEndereco.getMessage());
+	}
 }
