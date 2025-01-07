@@ -73,7 +73,7 @@ public class ClienteServiceTeste {
 		
 		List<Cliente> clientesRetornados = service.getAll();
 		
-		Assertions.assertEquals(clientesEsperados, clientesRetornados);	
+		Assertions.assertEquals(clientesEsperados, clientesRetornados);
 		
 		verify(repository, times(1)).findAll();
 	}
@@ -150,5 +150,27 @@ public class ClienteServiceTeste {
 		when(repository.findById(1L)).thenReturn(Optional.of(clienteComEnderecoNull));
 		MissingRequiredAttributeException exceptionThrownEndereco = Assertions.assertThrows(MissingRequiredAttributeException.class, () -> service.update(1L, clienteComEnderecoNull));
 		Assertions.assertEquals("Preencha todos campos obrigatórios", exceptionThrownEndereco.getMessage());
+	}
+	
+	@Test
+	void deleteSuccess() {
+		List<Pedido> lista = new ArrayList<>();
+		Cliente cliente = new Cliente("João", "jao2002@gmail.com", "Centro", lista);
+		
+		when(repository.findById(1L)).thenReturn(Optional.of(cliente));
+		
+		service.delete(1L);
+		
+		verify(repository, times(1)).delete(cliente);
+				
+	}
+	
+	@Test
+	void deleteFailed() {
+		when(repository.findById(1L)).thenReturn(Optional.empty());
+		
+		ResourceNotFoundException exceptionThrown = Assertions.assertThrows(ResourceNotFoundException.class, () -> service.delete(1L));
+		
+		Assertions.assertEquals(exceptionThrown.getMessage(), "Cliente com ID:1 não encontrado!");
 	}
 }
